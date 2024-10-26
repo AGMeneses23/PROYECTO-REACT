@@ -1,11 +1,34 @@
-import { Box, Button, TextField } from '@mui/material'
-import React from 'react'
+import { Box, Button, TextField, Typography } from '@mui/material'
+import axios from 'axios'
+import React, { useState } from 'react'
 
 function Login() {
 
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+
+    const loginValidate = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/login', {
+                email: email,
+                password: password
+            });
+            if (response.data.acceso == 'Ok') {
+                localStorage.setItem('token', response.data.token)
+                window.location.href = '/home'
+            } else {
+
+                setError(response.data.error);
+            }
+        } catch (error) {
+            setError('Ocurrió un error');
+        }
+    }
 
     return (
-
         <Box
             sx={{
                 width: 500,
@@ -20,7 +43,6 @@ function Login() {
                 boxSizing: 'border-box'
             }}
         >
-
             <h1>LOGIN</h1>
 
             <Box
@@ -31,35 +53,40 @@ function Login() {
                     boxSizing: 'border-box'
                 }}
             >
-
-                <div>
+                <form onSubmit={loginValidate}>
                     <TextField
                         fullWidth
                         label="Usuario"
-                        id="fullWidth"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        id="email"
                         margin='normal'
                     />
                     <TextField
                         fullWidth
                         id="outlined-password-input"
                         label="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         autoComplete="current-password"
                         margin='normal'
                     />
+                    <Typography color="error">
+                        {error}
+                    </Typography>
                     <Button
                         variant='contained'
                         color='primary'
                         fullWidth
+                        type="submit" 
                         sx={{ mt: 2 }}
                     >
                         Iniciar Sesión
                     </Button>
-                </div>
-
+                </form>
             </Box>
         </Box>
-
     )
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Home from './components/Home';
+import Categoria from './components/Categoria';
 
 function App() {
 
@@ -17,6 +18,8 @@ function App() {
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
         {/* Ruta del login */}
         <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+        {/*Ruta de categoria*/}
+        <Route path="/categoria/:idCat?" element={isAuthenticated ? <Categoria /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
 
