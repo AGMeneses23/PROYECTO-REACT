@@ -23,8 +23,13 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add'
-
+import Swal from 'sweetalert2';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import LogoutIcon from '@mui/icons-material/Logout';
+import HomeIcon from '@mui/icons-material/Home';
 const drawerWidth = 240;
+
 
 
 const paginationModel = { page: 0, pageSize: 5 };
@@ -107,7 +112,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer() {
+export default function CategoriasCrud({ setIsAuthenticated }) {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -115,12 +120,28 @@ export default function MiniDrawer() {
   const navigate = useNavigate();
 
   // Sirve para listar las cátegorias
-
   React.useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/categorias/lista')
-      .then(response => setRows(response.data.data))
-      .catch(error => console.error('Ocurrio un error', error))
-  }, [])
+    const fetchCategorias = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          const response = await axios.get('https://localhost/api/categorias/lista', {
+            headers: {
+              Authorization: `Bearer ${token}` // Agrega el token al encabezado
+            }
+          });
+          setRows(response.data.data);
+        } else {
+          console.error("Token no encontrado");
+        }
+      } catch (error) {
+        console.error('Ocurrió un error', error);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -142,14 +163,90 @@ export default function MiniDrawer() {
   }
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://127.0.0.1:8000/api/categorias/eliminar/${id}`)
+
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error('Token no encontrado');
+        Swal.fire({
+          title: "Error",
+          text: "No se encontró el token de autenticación.",
+          icon: "error",
+          confirmButtonText: "Aceptar"
+      });
+      return;
+      }
+
+      const response = await axios.delete(`https://localhost/api/categorias/eliminar/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
       console.log(response.data.message);
       setRows(rows.filter(row => row.id !== id));
+      Swal.fire({
+        title: "! Eliminado !",
+        text: "La categoria ha sido eliminada exitosamente.",
+        icon: "success",
+      });
     } catch (error) {
       console.error('Ocurrio un error al intentar eliminar la categoría:', error);
-
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo eliminar la categoría",
+        icon: "error",
+      });
     }
   }
+
+  const confirmDelete = (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(id);
+      }
+    });
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post("https://localhost/api/logout", null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      if (response.status === 200) {
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+        Swal.fire({
+          title: "Sesión Cerrada",
+          text: "Has cerrado sesión exitosamente.",
+          icon: "success",
+          confirmButtonText: "Aceptar"
+        }).then(() => {
+          navigate("/login");
+        });
+      }
+    } catch (error) {
+      console.error("Error al cerrar sesión: ", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al intentar cerrar la sesión.",
+        icon: "error",
+        confirmButtonText: "Aceptar"
+      });
+    }
+  };
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
@@ -166,14 +263,16 @@ export default function MiniDrawer() {
             variant='contained'
             color='primary'
             onClick={() => handleEdit(params.row.id)}
-            sx={{ marginRight: 1 }}>
+            sx={{ marginRight: 1 }}
+            startIcon={<EditIcon />}>
             Editar
           </Button>
 
           <Button
             variant='contained'
             color='error'
-            onClick={() => handleDelete(params.row.id)}>
+            onClick={() => confirmDelete(params.row.id)} className='delete-button'
+            startIcon={<DeleteIcon />}>
             Eliminar
           </Button>
         </>
@@ -185,7 +284,7 @@ export default function MiniDrawer() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="absolute" open={open} >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -202,7 +301,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            Categorias
           </Typography>
         </Toolbar>
       </AppBar>
@@ -214,9 +313,20 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Categoria', 'Gastos'].map((text) => (
+          {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                onClick={() => {
+                  if (text === "Inicio") {
+                    navigate('/inicio');
+                  } else if (text === "Categorias") {
+                    navigate("/categorias-lista");
+                  } else if (text === "Gastos") {
+                    console.log('Entrando a gastos......')
+                  } else if (text === "Cerrar Sesión") {
+                    handleLogout();
+                  }
+                }}
                 sx={[
                   {
                     minHeight: 48,
@@ -246,7 +356,10 @@ export default function MiniDrawer() {
                       },
                   ]}
                 >
-                  {text === 'Categoria' ? <CategoryIcon /> : <AttachMoneyIcon />}
+                  {text === "Categorias" && <CategoryIcon />}
+                  {text === "Inicio" && <HomeIcon />}
+                  {text === "Gastos" && <AttachMoneyIcon />}
+                  {text === "Cerrar Sesión" && <LogoutIcon />}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}

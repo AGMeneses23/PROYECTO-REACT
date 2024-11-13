@@ -32,7 +32,19 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.swal-privacy-popup {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.custom-icon .swal2-icon-content {
+  font-size: 40px; /* Ajusta el tamaño del icono según lo necesites */
 }

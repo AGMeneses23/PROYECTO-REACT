@@ -1,25 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
-import Home from './components/Home';
 import Categoria from './components/Categoria';
+import Inicio from './components/Inicio';
+import CategoriasCrud from './components/CategoriasCrud';
+import Registro from './components/Registro';
 
 function App() {
 
-  const isAuthenticated = !!localStorage.getItem('token'); //verifica si el usuario es autenticado
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token')); //verifica si el usuario es autenticado
 
   return (
 
     <Router>
       <Routes>
         {/* Ruta del login */}
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/home" /> : <Login />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/categorias-lista" /> : <Login setIsAuthenticated={setIsAuthenticated} />} />
+        {/* Ruta del registro */}
+        <Route path="/registro" element={<Registro />} />
         {/* Ruta del home (protegida) */}
-        <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/categorias-lista" element={isAuthenticated ? <CategoriasCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
         {/* Ruta del login */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/login"} />} />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/categorias-lista" : "/login"} />} />
         {/*Ruta de categoria*/}
-        <Route path="/categoria/:idCat?" element={isAuthenticated ? <Categoria /> : <Navigate to="/login" />} />
+        <Route path="/categoria/:idCat?" element={isAuthenticated ? <Categoria setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
+        {/*Ruta de Inicio*/}
+        <Route path="/inicio" element={isAuthenticated ? <Inicio setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
 

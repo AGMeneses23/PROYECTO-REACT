@@ -16,17 +16,16 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Button, TextField } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import HomeIcon from '@mui/icons-material/Home';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useState } from 'react';
+
+
+
 
 const drawerWidth = 240;
 
@@ -108,111 +107,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export default function Categoria({ setIsAuthenticated }) {
+export default function Inicio({ setIsAuthenticated }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [nombre, setNombre] = React.useState('');
-    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const { idCat } = useParams();
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
 
-    React.useEffect(() => {
-        if (idCat) {
-            const fetchCategoria = async () => {
-                try {
-                    const token = localStorage.getItem("token");
-
-                    if (token) {
-                        const response = await axios.get(`https://localhost/api/categorias/${idCat}`, {
-                            headers: {
-                                Authorization: `Bearer ${token}` // Asegúrate de incluir el token aquí
-                            }
-                        });
-                        setNombre(response.data.nombre);
-                    } else {
-                        console.error("Token no encontrado");
-                    }
-                } catch (error) {
-                    console.error('Ocurrió un error al obtener la categoría', error);
-                    setError('Hubo un problema al obtener los datos de la categoría.');
-                }
-            };
-
-            fetchCategoria();
-        }
-    }, [idCat]);
-
-
-    const handleSave = async (e) => {
-        e.preventDefault();
-
-        if (!nombre.trim()) {
-            setError('Este campo es obligatorio');
-            return;
-        }
-
-        setError('');
-
-        try {
-            const url = idCat
-                ? `https://localhost/api/categorias/editar/${idCat}`
-                : 'https://localhost/api/categorias/guardar';
-
-            const method = idCat ? 'put' : 'post';
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                console.log('Token no encontrado');
-                Swal.fire({
-                    title: "Error",
-                    text: "No se encontró el token de autenticación.",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                });
-                return;
-            }
-
-            const response = await axios({
-                method,
-                url,
-                data: { nombre },
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 200 || response.status === 201) {
-                setNombre('');
-                Swal.fire({
-                    title: idCat ? "¡ Categoria Actualizada !" : "! Categoría creada !",
-                    text: idCat
-                        ? "La categoria ha sido actualizada correctamente."
-                        : "La nueva categoría ha sido creda exitosamente.",
-                    icon: "success",
-                    confirmButtonText: "Aceptar"
-                }).then(() => {
-                    navigate('/home');
-                });
-            } else {
-                console.error('Error en la operación:', response.data.message);
-                Swal.fire({
-                    title: "Error",
-                    text: "Hubo un error al guardar la categoria.",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                });
-            }
-
-        } catch (error) {
-            console.error('Ocurrió un error en la solicitud:', error);
-            Swal.fire({
-                title: "Error",
-                text: "No se pudo completar la solicitud.",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
-        }
+    const handleDrawerClose = () => {
+        setOpen(false);
     };
 
     const handleLogout = async () => {
@@ -246,14 +151,6 @@ export default function Categoria({ setIsAuthenticated }) {
         }
     };
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -274,7 +171,7 @@ export default function Categoria({ setIsAuthenticated }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        Categoria
+                        Inicio
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -286,14 +183,14 @@ export default function Categoria({ setIsAuthenticated }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text) => (
+                    {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 onClick={() => {
                                     if (text === "Inicio") {
                                         navigate('/inicio');
                                     } else if (text === "Categorias") {
-                                        navigate("/home");
+                                        navigate("/categorias-lista");
                                     } else if (text === "Gastos") {
                                         console.log('Entrando a gastos......')
                                     } else if (text === "Cerrar Sesión") {
@@ -352,45 +249,15 @@ export default function Categoria({ setIsAuthenticated }) {
                 </List>
                 <Divider />
             </Drawer>
-            <Box component="main"
-                sx={{
-                    flexGrow: 1,
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100vh'
-                }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
-                <form
-                    onSubmit={handleSave}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{ fontFamily: 'Roboto Slab, serif', fontWeight: 700, fontSize: '32px' }}
                 >
-
-                    <TextField
-                        id="categoria"
-                        label='Ingresa categoría'
-                        multiline
-                        maxRows={4}
-                        value={nombre}
-                        onChange={(e) => {
-                            setNombre(e.target.value);
-                            if (error) setError('');
-                        }}
-                        sx={{ mb: 2, width: '25ch' }}
-                        error={!!error}
-                        helperText={error}
-                    />
-
-                    <Button variant='contained' type='submit'>Guardar</Button>
-                </form>
-
+                    AQUÍ DEBE DE IR ALGO, PERO NO SE :P
+                </Typography>
             </Box>
         </Box>
     );
