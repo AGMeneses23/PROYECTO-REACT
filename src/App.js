@@ -5,6 +5,7 @@ import Categoria from './components/Categoria';
 import Inicio from './components/Inicio';
 import CategoriasCrud from './components/CategoriasCrud';
 import Registro from './components/Registro';
+import GastosCrud from './components/GastosCrud';
 
 function App() {
 
@@ -26,6 +27,9 @@ function App() {
         <Route path="/categoria/:idCat?" element={isAuthenticated ? <Categoria setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
         {/*Ruta de Inicio*/}
         <Route path="/inicio" element={isAuthenticated ? <Inicio setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
+        {/*Ruta de Gastos*/}
+        <Route path="/gastos" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
+        <Route path="/gastos/:idGasto?" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
 

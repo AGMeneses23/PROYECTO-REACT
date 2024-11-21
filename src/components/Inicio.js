@@ -23,8 +23,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
-
+import { DataGrid } from '@mui/x-data-grid';
+import Paper from '@mui/material/Paper';
+import { Button, Fab } from '@mui/material';
+import { useEffect, useState } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 
 const drawerWidth = 240;
@@ -107,10 +112,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
+
+const paginationModel = { page: 0, pageSize: 5 };
+
 export default function Inicio({ setIsAuthenticated }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
+    const [rows, setRows] = useState([]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -118,6 +127,86 @@ export default function Inicio({ setIsAuthenticated }) {
 
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    React.useEffect(() => {
+        //Realizar la solicitu a la APIpara obtener los gastos
+        axios.get("http://127.0.0.1:8000/api/gastos/lista", {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    //MAPEAR LOS DATOS DE LA RESPUESTA A LA ESTRUCTURA DE LA TABLA
+                    const gastos = response.data.data.map((gasto) => ({
+                        id: gasto.id,
+                        categoria: gasto.categoria.nombre,
+                        fecha: gasto.fecha,
+                        monto: gasto.monto,
+                        descripcion: gasto.descripcion,
+                    }));
+                    setRows(gastos);
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener los gastos: ", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Hubo un problema al obtener los gastos.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
+            });
+    }, []);
+
+    const handleAddGasto = () => {
+        navigate('/gastos');
+    }
+
+    const handleEdit = (id) => {
+        navigate(`/gastos/${id}`);
+    };
+
+    const handleDelete = (id) => {
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esto.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: "#d33",
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //REALIZAMOS LA SOLICITUD DELETE A LA API
+                axios.delete(`http://127.0.0.1:8000/api/gastos/eliminar/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                })
+                    .then((response) => {
+                        if (response.status === 200) {
+                            //EL GASTO FUE ELIMINADO CORRECTAMENTE
+                            Swal.fire('¡Eliminado!', 'El gasto ha sido eliminado.', 'success');
+
+                            //ACTUALIZA EL ESTADO PARA ELIMINAR EL GASTO DE LA LISTA LOCAL
+                            setRows((prevRows) => prevRows.filter((gasto) => gasto.id !== id));
+                        }
+                    }).catch((error) => {
+                        console.error("Error al eliminar el gasto: ", error);
+                        Swal.fire({
+                            title: "Error",
+                            text: "Hubo un problema al eliminar el gasto.",
+                            icon: "error",
+                            confirmButtonText: "Aceptar",
+                        });
+                    });
+            }
+        });
+
     };
 
     const handleLogout = async () => {
@@ -150,6 +239,57 @@ export default function Inicio({ setIsAuthenticated }) {
             });
         }
     };
+
+    const columns = [
+        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'categoria', headerName: 'Categoria', width: 130 },
+        { field: 'fecha', headerName: 'Fecha', width: 130 },
+        {
+            field: 'monto',
+            headerName: 'Monto',
+            type: 'number',
+            width: 90,
+        },
+        {
+            field: 'descripcion',
+            headerName: 'Descripción',
+            width: 190,
+        },
+        {
+            field: 'editar',
+            headerName: 'Editar',
+            renderCell: (params) => (
+                <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={() => handleEdit(params.row.id)}
+                    sx={{ marginRight: 1 }}
+                    startIcon={<EditIcon />}
+                >
+                    Editar
+                </Button>
+            ),
+            width: 160,
+        },
+        {
+            field: 'eliminar',
+            headerName: 'Eliminar',
+            renderCell: (params) => (
+                <Button
+                    variant='contained'
+                    color='error'
+                    onClick={() => handleDelete(params.row.id)}
+                    sx={{ marginRight: 1 }}
+                    startIcon={<DeleteIcon />}
+                >
+                    Eliminar
+                </Button>
+            ),
+            width: 160,
+        }
+    ];
+
+
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -247,17 +387,32 @@ export default function Inicio({ setIsAuthenticated }) {
                         </ListItem>
                     ))}
                 </List>
-                <Divider />
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{
+                flexGrow: 1,
+                bgcolor: 'background.default',
+                p: 3,
+                width: '100%',
+                height: '100vh',
+                overflow: 'auto',
+            }}>
                 <DrawerHeader />
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    sx={{ fontFamily: 'Roboto Slab, serif', fontWeight: 700, fontSize: '32px' }}
-                >
-                    AQUÍ DEBE DE IR ALGO, PERO NO SE :P
-                </Typography>
+                <Paper sx={{ p: 2 }}>
+                    <div style={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{ pagination: { paginationModel } }}
+                            pageSizeOptions={[5, 10]}
+                            sx={{ border: 0 }}
+                        />
+                    </div>
+                </Paper>
+
+                <Fab color='primary' sx={{ position: 'fixed', bottom: 16, right: 16 }} onClick={handleAddGasto}>
+                    <AddIcon />
+                </Fab>
+
             </Box>
         </Box>
     );
