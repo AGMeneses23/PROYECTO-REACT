@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, MenuItem, Snackbar, TextField } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, MenuItem, Snackbar, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -143,113 +143,213 @@ function GastosCrud() {
     return (
         <Box
             sx={{
-                width: 500,
-                maxWidth: "100%",
+                minHeight: "100vh",
                 display: "flex",
-                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                minHeight: "80vh",
-                margin: "auto",
+                background: "linear-gradient(135deg, #87CEFA, #ffffff)",
                 padding: 2,
-                boxSizing: "border-box",
             }}
         >
-            <h1>{idGasto ? "EDITAR GASTO" : "REGISTRO DE GASTOS"}</h1>
 
             <Box
                 sx={{
-                    width: "100%",
-                    maxWidth: { xs: 300, sm: 400, md: 500 },
-                    padding: 2,
-                    boxSizing: "border-box",
+                    width: 400,
+                    backgroundColor: "#fff",
+                    padding: 4,
+                    borderRadius: 4,
+                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                 }}
             >
-                <form onSubmit={handleSubmit}>
-                    {/* Campo Categoría */}
-                    <TextField
-                        id="categoria"
-                        select
-                        label="Categoría"
-                        value={categoria || ''}
-                        onChange={handleCategoriaChange}
-                        fullWidth
-                        margin="normal"
-                        helperText="Por favor selecciona una categoría"
-                    >
-                        {categorias.map((cat) => (
-                            <MenuItem key={cat.id} value={cat.id}>
-                                {cat.nombre}
-                            </MenuItem>
-                        ))}
-                    </TextField>
 
-                    {/* Campo de Fecha */}
-                    <TextField
-                        fullWidth
-                        label="Fecha"
-                        type="date"
-                        value={fecha || ''}
-                        onChange={(e) => setFecha(e.target.value)}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        margin="normal"
-                    />
-
-                    {/* Campo de Monto */}
-                    <TextField
-                        fullWidth
-                        label="Monto"
-                        type="number"
-                        value={monto || ''}
-                        onChange={(e) => setMonto(e.target.value)}
-                        margin="normal"
-                    />
-
-                    {/* Campo de Descripción */}
-                    <TextField
-                        fullWidth
-                        label="Descripción"
-                        value={descripcion || ''}
-                        onChange={(e) => setDescripcion(e.target.value)}
-                        multiline
-                        rows={4}
-                        margin="normal"
-                    />
-
-                    {/* Botón de Guardar */}
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        type="submit"
-                        sx={{ mt: 2 }}
-                    >
-                        {idGasto ? "Actualizar Gasto" : "Guardar Gasto"}
-                    </Button>
-                </form>
-            </Box>
-
-            {/* Snackbar con Alerta */}
-            <Snackbar
-                open={open}
-                autoHideDuration={6000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-            >
-                <Alert
-                    onClose={handleClose}
-                    severity="success"
-                    variant="filled"
-                    sx={{ width: "100%" }}
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{
+                        fontWeight: "bold",
+                        color: "#1976d2",
+                    }}
                 >
-                    <AlertTitle>Éxito</AlertTitle>
+                    {idGasto ? "Editar gastos" : "Registro de gastos"}
+                </Typography>
+
+                <Typography
+                    variant="body1"
+                    sx={{
+                        marginBottom: 2,
+                        color: "#555",
+                    }}
+                >
                     {idGasto
-                        ? "El gasto se actualizó correctamente."
-                        : "El gasto se creó correctamente."}
-                </Alert>
-            </Snackbar>
+                        ? "Actualiza los detalles del gasto seleccionado."
+                        : "Registra un nuevo gasto en tu historial."}
+                </Typography>
+
+
+                <Box
+                    sx={{
+                        width: "100%",
+                        padding: 2,
+                        boxSizing: "border-box",
+                    }}
+                >
+                    <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+                        {/* Campo Categoría */}
+                        <TextField
+                            id="categoria"
+                            select
+                            label="Categoría"
+                            value={categoria || ''}
+                            onChange={handleCategoriaChange}
+                            fullWidth
+                            margin="normal"
+                            helperText="Por favor selecciona una categoría"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        >
+                            {categorias.map((cat) => (
+                                <MenuItem key={cat.id} value={cat.id}>
+                                    {cat.nombre}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        {/* Campo de Fecha */}
+                        <TextField
+                            fullWidth
+                            label="Fecha"
+                            type="date"
+                            value={fecha || ''}
+                            onChange={(e) => setFecha(e.target.value)}
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                }
+                            }}
+                            margin="normal"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        {/* Campo de Monto */}
+                        <TextField
+                            fullWidth
+                            label="Monto"
+                            type="number"
+                            value={monto || ''}
+                            onChange={(e) => setMonto(e.target.value)}
+                            margin="normal"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        {/* Campo de Descripción */}
+                        <TextField
+                            fullWidth
+                            label="Descripción"
+                            value={descripcion || ''}
+                            onChange={(e) => setDescripcion(e.target.value)}
+                            multiline
+                            rows={4}
+                            margin="normal"
+                            variant="outlined"
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                gap: 2, // Espaciado horizontal entre botones
+                                mt: 3, // Espaciado superior
+                                flexWrap: "wrap", // Para que se ajusten si la pantalla es pequeña
+                            }}
+                        >
+
+                            {/* Botón de Guardar */}
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                type="submit"
+                                sx={{
+                                    flex: 1, // Ambos botones tomarán el mismo ancho
+                                    maxWidth: 200, // Limita el ancho máximo
+                                    padding: 1.5,
+                                    fontWeight: "bold",
+                                    background: "linear-gradient(135deg, #1976d2, #4fc3f7)",
+                                    color: "#fff",
+                                    "&:hover": {
+                                        background: "linear-gradient(135deg, #125a9c, #3ca7d0)",
+                                    },
+                                }}
+                            >
+                                {idGasto ? "Actualizar Gasto" : "Guardar Gasto"}
+                            </Button>
+
+                            {/* Botón Regresar */}
+                            <Button
+                                variant='outlined'
+                                fullWidth
+                                onClick={() => navigate("/inicio")}
+                                sx={{
+                                    flex: 1, // Ambos botones tomarán el mismo ancho
+                                    maxWidth: 200, // Limita el ancho máximo
+                                    padding: 1.5,
+                                    fontWeight: "bold",
+                                    color: "#1976d2",
+                                    borderColor: "#1976d2",
+                                    "&:hover": {
+                                        backgroundColor: "#e3f2fd",
+                                        borderColor: "#125a9c",
+                                    },
+                                }}
+                            >
+                                Regresar
+                            </Button>
+                        </Box>
+                    </form>
+                </Box>
+
+                {/* Snackbar con Alerta */}
+                <Snackbar
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                    <Alert
+                        onClose={handleClose}
+                        severity="success"
+                        variant="filled"
+                        sx={{ width: "100%" }}
+                    >
+                        <AlertTitle>Éxito</AlertTitle>
+                        {idGasto
+                            ? "El gasto se actualizó correctamente."
+                            : "El gasto se creó correctamente."}
+                    </Alert>
+                </Snackbar>
+            </Box>
         </Box>
     );
 }

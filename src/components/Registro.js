@@ -37,7 +37,7 @@ function Registro() {
         }
 
         try {
-            
+
             const response = await axios.post('http://localhost:8000/api/register', {
                 name,
                 email,
@@ -81,31 +81,47 @@ function Registro() {
     return (
         <Box
             sx={{
-                width: 500,
-                maxWidth: '100%',
+                minHeight: '100vh',
                 display: 'flex',
-                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: '80vh',
-                margin: 'auto',
+                background: 'linear-gradient(135deg, #87CEFA, #ffffff)',
                 padding: 2,
-                boxSizing: 'border-box'
             }}
         >
-
-            <h1>REGISTRO</h1>
-
             <Box
                 sx={{
-                    width: '100%',
-                    maxWidth: { xs: 300, sm: 400, md: 500 },
-                    padding: 2,
-                    boxSizing: 'border-box'
+                    width: 400,
+                    backgroundColor: '#fff',
+                    padding: 4,
+                    borderRadius: 4,
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                 }}
             >
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{
+                        fontWeight: 'bold',
+                        color: '#1976d2',
+                    }}
+                >
+                    Registro
+                </Typography>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        marginBottom: 2,
+                        color: '#555',
+                    }}
+                >
+                    Crea una cuenta para usar la aplicación.
+                </Typography>
 
-                <form onSubmit={handlerRegister}>
+                <form onSubmit={handlerRegister} style={{ width: '100%' }}>
                     <TextField
                         fullWidth
                         label="Nombre"
@@ -113,8 +129,13 @@ function Registro() {
                         onChange={(e) => setName(e.target.value)}
                         id="name"
                         margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
-
                     <TextField
                         fullWidth
                         label="Correo"
@@ -122,8 +143,13 @@ function Registro() {
                         onChange={(e) => setEmail(e.target.value)}
                         id="email"
                         margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
-
                     <TextField
                         fullWidth
                         label="Contraseña"
@@ -132,8 +158,13 @@ function Registro() {
                         type="password"
                         autoComplete="new-password"
                         margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
-
                     <TextField
                         fullWidth
                         label="Confirmar Contraseña"
@@ -142,47 +173,55 @@ function Registro() {
                         type="password"
                         autoComplete="new-password"
                         margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
-
-                    <Typography color="error">
+                    <Typography color="error" sx={{ marginTop: 1 }}>
                         {error}
                     </Typography>
-
                     <Button
                         variant="contained"
-                        color="primary"
-                        fullWidth
                         type="submit"
-                        sx={{ mt: 2 }}
+                        fullWidth
+                        sx={{
+                            mt: 3,
+                            padding: 1.5,
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(135deg, #1976d2, #4fc3f7)',
+                            color: '#fff',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #125a9c, #3ca7d0)',
+                            },
+                        }}
                     >
-
                         Registrarse
-
                     </Button>
-
                 </form>
 
                 <Typography
-                    sx={{ mt: 2 }}
-                    color='primary'
+                    variant="body2"
+                    sx={{
+                        marginTop: 2,
+                        color: '#1976d2',
+                        textAlign: 'center',
+                    }}
                 >
-
                     <Box
                         component="span"
-                        sx={{ cursor: 'pointer' }}
+                        sx={{ cursor: 'pointer', textDecoration: 'underline' }}
                         onClick={() => navigate('/login')}
                     >
-
-                        ¿Ya tienes cuenta?, Inicia Sesión
-
+                        ¿Ya tienes cuenta? Inicia Sesión
                     </Box>
-
                 </Typography>
-
             </Box>
-
         </Box>
     );
+
 
 }
 

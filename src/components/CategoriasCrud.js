@@ -173,8 +173,8 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
           text: "No se encontró el token de autenticación.",
           icon: "error",
           confirmButtonText: "Aceptar"
-      });
-      return;
+        });
+        return;
       }
 
       const response = await axios.delete(`https://localhost/api/categorias/eliminar/${id}`, {
@@ -249,36 +249,37 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
+    // { field: 'id', headerName: 'ID', width: 70 },
     { field: 'nombre', headerName: 'Nombre', width: 130 },
     {
-      field: 'actions',
-      headerName: 'Acciones',
-      width: 250,
+      field: 'editar',
+      headerName: 'Editar',
+      width: 160,
       renderCell: (params) => (
-
-        <>
-
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={() => handleEdit(params.row.id)}
-            sx={{ marginRight: 1 }}
-            startIcon={<EditIcon />}>
-            Editar
-          </Button>
-
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => confirmDelete(params.row.id)} className='delete-button'
-            startIcon={<DeleteIcon />}>
-            Eliminar
-          </Button>
-        </>
-
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => handleEdit(params.row.id)}
+          sx={{ marginRight: 1 }}
+          startIcon={<EditIcon />}>
+          Editar
+        </Button>
       )
     },
+    {
+      field: 'eliminar',
+      headerName: 'Eliminar',
+      width: 160,
+      renderCell: (params) => (
+        <Button
+          variant='contained'
+          color='error'
+          onClick={() => confirmDelete(params.row.id)} className='delete-button'
+          startIcon={<DeleteIcon />}>
+          Eliminar
+        </Button>
+      )
+    }
   ];
 
   return (
@@ -313,16 +314,14 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text) => (
+          {['Gastos', 'Categorias', 'Cerrar Sesión'].map((text) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => {
-                  if (text === "Inicio") {
+                  if (text === "Gastos") {
                     navigate('/inicio');
                   } else if (text === "Categorias") {
                     navigate("/categorias-lista");
-                  } else if (text === "Gastos") {
-                    console.log('Entrando a gastos......')
                   } else if (text === "Cerrar Sesión") {
                     handleLogout();
                   }
@@ -357,7 +356,6 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
                   ]}
                 >
                   {text === "Categorias" && <CategoryIcon />}
-                  {text === "Inicio" && <HomeIcon />}
                   {text === "Gastos" && <AttachMoneyIcon />}
                   {text === "Cerrar Sesión" && <LogoutIcon />}
                 </ListItemIcon>

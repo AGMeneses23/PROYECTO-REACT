@@ -1,116 +1,13 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { Button, TextField } from '@mui/material';
-import CategoryIcon from '@mui/icons-material/Category';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { Button, TextField, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
 
-const drawerWidth = 240;
 
-const openedMixin = (theme) => ({
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-    transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('sm')]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
-    },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-}));
-
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme }) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    variants: [
-        {
-            props: ({ open }) => open,
-            style: {
-                marginLeft: drawerWidth,
-                width: `calc(100% - ${drawerWidth}px)`,
-                transition: theme.transitions.create(['width', 'margin'], {
-                    easing: theme.transitions.easing.sharp,
-                    duration: theme.transitions.duration.enteringScreen,
-                }),
-            },
-        },
-    ],
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme }) => ({
-        width: drawerWidth,
-        flexShrink: 0,
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
-        variants: [
-            {
-                props: ({ open }) => open,
-                style: {
-                    ...openedMixin(theme),
-                    '& .MuiDrawer-paper': openedMixin(theme),
-                },
-            },
-            {
-                props: ({ open }) => !open,
-                style: {
-                    ...closedMixin(theme),
-                    '& .MuiDrawer-paper': closedMixin(theme),
-                },
-            },
-        ],
-    }),
-);
-
-export default function Categoria({ setIsAuthenticated }) {
-    const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+export default function Categoria() {
     const [nombre, setNombre] = React.useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -135,7 +32,12 @@ export default function Categoria({ setIsAuthenticated }) {
                     }
                 } catch (error) {
                     console.error('Ocurrió un error al obtener la categoría', error);
-                    setError('Hubo un problema al obtener los datos de la categoría.');
+                    Swal.fire({
+                        title: "Error",
+                        text: "Hubo un problema al obtner los datos de la categoría.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
                 }
             };
 
@@ -148,7 +50,12 @@ export default function Categoria({ setIsAuthenticated }) {
         e.preventDefault();
 
         if (!nombre.trim()) {
-            setError('Este campo es obligatorio');
+            Swal.fire({
+                title: "Campo Obligatorio",
+                text: "Por favor ingresa el nombre de la categoría",
+                icon: "warning",
+                confirmButtonText: "Aceptar"
+            })
             return;
         }
 
@@ -215,161 +122,63 @@ export default function Categoria({ setIsAuthenticated }) {
         }
     };
 
-    const handleLogout = async () => {
-        try {
-            const response = await axios.post("https://localhost/api/logout", null, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`
-                }
-            });
-
-            if (response.status === 200) {
-                localStorage.removeItem("token");
-                setIsAuthenticated(false);
-                Swal.fire({
-                    title: "Sesión Cerrada",
-                    text: "Has cerrado sesión exitosamente.",
-                    icon: "success",
-                    confirmButtonText: "Aceptar"
-                }).then(() => {
-                    navigate("/login");
-                });
-            }
-        } catch (error) {
-            console.error("Error al cerrar sesión: ", error);
-            Swal.fire({
-                title: "Error",
-                text: "Hubo un problema al intentar cerrar la sesión.",
-                icon: "error",
-                confirmButtonText: "Aceptar"
-            });
-        }
-    };
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-
     return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <AppBar position="fixed" open={open}>
-                <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={[
-                            {
-                                marginRight: 5,
-                            },
-                            open && { display: 'none' },
-                        ]}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        Categoria
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Drawer variant="permanent" open={open}>
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
-                    {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
-                                onClick={() => {
-                                    if (text === "Inicio") {
-                                        navigate('/inicio');
-                                    } else if (text === "Categorias") {
-                                        navigate("/home");
-                                    } else if (text === "Gastos") {
-                                        console.log('Entrando a gastos......')
-                                    } else if (text === "Cerrar Sesión") {
-                                        handleLogout();
-                                    }
-                                }}
-                                sx={[
-                                    {
-                                        minHeight: 48,
-                                        px: 2.5,
-                                    },
-                                    open
-                                        ? {
-                                            justifyContent: 'initial',
-                                        }
-                                        : {
-                                            justifyContent: 'center',
-                                        },
-                                ]}
-                            >
-                                <ListItemIcon
-                                    sx={[
-                                        {
-                                            minWidth: 0,
-                                            justifyContent: 'center',
-                                        },
-                                        open
-                                            ? {
-                                                mr: 3,
-                                            }
-                                            : {
-                                                mr: 'auto',
-                                            },
-                                    ]}
-                                >
-                                    {text === "Categorias" && <CategoryIcon />}
-                                    {text === "Inicio" && <HomeIcon />}
-                                    {text === "Gastos" && <AttachMoneyIcon />}
-                                    {text === "Cerrar Sesión" && <LogoutIcon />}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={text}
-                                    sx={[
-                                        open
-                                            ? {
-                                                opacity: 1,
-                                            }
-                                            : {
-                                                opacity: 0,
-                                            },
-                                    ]}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-                <Divider />
-            </Drawer>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                background: "linear-gradient(135deg, #87CEFA, #ffffff)",
+                padding: 2,
+            }}
+        >
+
             <Box component="main"
                 sx={{
                     flexGrow: 1,
-                    p: 3,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100vh'
+                    maxWidth: 400,
+                    backgroundColor: "#fff",
+                    padding: 4,
+                    borderRadius: 4,
+                    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}>
-                <DrawerHeader />
+
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{
+                        fontWeight: "bold",
+                        color: "#1976d2",
+                        textAlign: "center",
+                    }}
+                >
+                    {idCat ? "Actualizar Categoría" : "Agregar Categoría"}
+                </Typography>
+
+                <Typography
+                    variant="body1"
+                    sx={{
+                        marginBottom: 2,
+                        color: "#555",
+                        textAlign: "center",
+                    }}
+                >
+                    {idCat ? "Actualiza la categoría para organizar tus gastos." :
+                        "Añade una nueva categoría para organizar tus gastos."}
+                </Typography>
+
                 <form
                     onSubmit={handleSave}
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center'
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        width: "100%",
                     }}
                 >
 
@@ -383,12 +192,55 @@ export default function Categoria({ setIsAuthenticated }) {
                             setNombre(e.target.value);
                             if (error) setError('');
                         }}
-                        sx={{ mb: 2, width: '25ch' }}
+                        sx={{
+                            marginBottom: 2,
+                            width: "100%",
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 2,
+                            },
+                        }}
                         error={!!error}
                         helperText={error}
+                        variant='outlined'
                     />
 
-                    <Button variant='contained' type='submit'>Guardar</Button>
+                    <Button
+                        variant='contained'
+                        type='submit'
+                        fullWidth
+                        sx={{
+                            padding: 1.5,
+                            fontWeight: "bold",
+                            background: "linear-gradient(135deg, #1976d2, #4fc3f7)",
+                            color: "#fff",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #125a9c, #3ca7d0)",
+                            },
+                        }}
+                    >
+                        {idCat ? "Actualizar Categoría" : "Guardar Categoría"}
+                    </Button>
+
+                    {/* Botón Regresar */}
+                    <Button
+                        variant='outlined'
+                        fullWidth
+                        onClick={() => navigate("/categoria-lista")}
+                        sx={{
+                            margin: 2,
+                            padding: 1.5,
+                            fontWeight: "bold",
+                            color: "#1976d2",
+                            borderColor: "#1976d2",
+                            "&:hover": {
+                                backgroundColor: "#e3f2fd",
+                                borderColor: "#125a9c",
+                            },
+                        }}
+                    >
+                        Regresar
+                    </Button>
+
                 </form>
 
             </Box>

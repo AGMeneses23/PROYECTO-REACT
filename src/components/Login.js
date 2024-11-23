@@ -31,7 +31,7 @@ function Login({ setIsAuthenticated }) {
                 email: email,
                 password: password
             });
-            if (response.data.acceso == 'Ok') {
+            if (response.data.acceso === 'Ok') {
                 localStorage.setItem('token', response.data.token);
                 const userName = response.data.nombreUsuario;
                 Swal.fire({
@@ -76,7 +76,6 @@ function Login({ setIsAuthenticated }) {
                             hideClass: {
                                 popup: 'animate__animated animate__fadeOutDown animate__faster'
                             },
-                            confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#4CAF50',
                             width: '90%',
                             padding: '20px',
@@ -87,6 +86,7 @@ function Login({ setIsAuthenticated }) {
                             }
                         }).then(() => {
                             localStorage.setItem('hasSeenPrivacyNotice', 'true');
+                            navigate("/inicio");
                         });
                     }
 
@@ -112,36 +112,60 @@ function Login({ setIsAuthenticated }) {
     return (
         <Box
             sx={{
-                width: 500,
-                maxWidth: '100%',
+                minHeight: '100vh',
                 display: 'flex',
-                flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: '80vh',
-                margin: 'auto',
+                background: 'linear-gradient(135deg, #87CEFA, #ffffff)',
                 padding: 2,
-                boxSizing: 'border-box'
             }}
         >
-            <h1>LOGIN</h1>
-
             <Box
                 sx={{
-                    width: '100%',
-                    maxWidth: { xs: 300, sm: 400, md: 500 },
-                    padding: 2,
-                    boxSizing: 'border-box'
+                    width: 400,
+                    backgroundColor: '#fff',
+                    padding: 4,
+                    borderRadius: 4,
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                 }}
             >
-                <form onSubmit={loginValidate}>
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    sx={{
+                        fontWeight: 'bold',
+                        color: '#1976d2',
+                    }}
+                >
+                    Bienvenido
+                </Typography>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        marginBottom: 2,
+                        color: '#555',
+                    }}
+                >
+                    Por favor, ingresa tus datos para continuar.
+                </Typography>
+
+                <form onSubmit={loginValidate} style={{ width: '100%' }}>
                     <TextField
                         fullWidth
                         label="Usuario"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         id="email"
-                        margin='normal'
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -151,40 +175,55 @@ function Login({ setIsAuthenticated }) {
                         onChange={(e) => setPassword(e.target.value)}
                         type="password"
                         autoComplete="current-password"
-                        margin='normal'
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                            },
+                        }}
                     />
-                    <Typography color="error">
+                    <Typography color="error" sx={{ marginTop: 1 }}>
                         {error}
                     </Typography>
                     <Button
-                        variant='contained'
-                        color='primary'
-                        fullWidth
+                        variant="contained"
                         type="submit"
-                        sx={{ mt: 2 }}
+                        fullWidth
+                        sx={{
+                            mt: 3,
+                            padding: 1.5,
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(135deg, #1976d2, #4fc3f7)',
+                            color: '#fff',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #125a9c, #3ca7d0)',
+                            },
+                        }}
                     >
                         Iniciar Sesión
                     </Button>
                 </form>
-                <Typography
-                    sx={{ mt: 2 }}
-                    color='primary'
-                >
 
+                <Typography
+                    variant="body2"
+                    sx={{
+                        marginTop: 2,
+                        color: '#1976d2',
+                        textAlign: 'center',
+                    }}
+                >
                     <Box
                         component="span"
-                        sx={{ cursor: 'pointer' }}
+                        sx={{ cursor: 'pointer', textDecoration: 'underline' }}
                         onClick={() => navigate('/registro')}
                     >
-
-                        ¿No tienes cuenta?, Regístrate
-
+                        ¿No tienes cuenta? Regístrate
                     </Box>
-
                 </Typography>
             </Box>
         </Box>
-    )
+    );
 }
 
 export default Login

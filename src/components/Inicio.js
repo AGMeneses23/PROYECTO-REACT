@@ -26,7 +26,7 @@ import Swal from 'sweetalert2';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { Button, Fab } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -241,7 +241,7 @@ export default function Inicio({ setIsAuthenticated }) {
     };
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
+        // { field: 'id', headerName: 'ID', width: 70 },
         { field: 'categoria', headerName: 'Categoria', width: 130 },
         { field: 'fecha', headerName: 'Fecha', width: 130 },
         {
@@ -311,7 +311,7 @@ export default function Inicio({ setIsAuthenticated }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        Inicio
+                        Tus Gastos
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -323,16 +323,14 @@ export default function Inicio({ setIsAuthenticated }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Inicio', 'Categorias', 'Gastos', 'Cerrar Sesión'].map((text, index) => (
+                    {['Gastos', 'Categorias', 'Cerrar Sesión'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 onClick={() => {
-                                    if (text === "Inicio") {
+                                    if (text === "Gastos") {
                                         navigate('/inicio');
                                     } else if (text === "Categorias") {
                                         navigate("/categorias-lista");
-                                    } else if (text === "Gastos") {
-                                        console.log('Entrando a gastos......')
                                     } else if (text === "Cerrar Sesión") {
                                         handleLogout();
                                     }
@@ -367,7 +365,6 @@ export default function Inicio({ setIsAuthenticated }) {
                                     ]}
                                 >
                                     {text === "Categorias" && <CategoryIcon />}
-                                    {text === "Inicio" && <HomeIcon />}
                                     {text === "Gastos" && <AttachMoneyIcon />}
                                     {text === "Cerrar Sesión" && <LogoutIcon />}
                                 </ListItemIcon>

@@ -29,6 +29,7 @@ function App() {
         <Route path="/inicio" element={isAuthenticated ? <Inicio setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
         {/*Ruta de Gastos*/}
         <Route path="/gastos" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
+        {/*Ruta para editar gastos*/}
         <Route path="/gastos/:idGasto?" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
