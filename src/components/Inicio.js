@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import CategoryIcon from '@mui/icons-material/Category';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
+import { Info } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -247,7 +247,7 @@ export default function Inicio({ setIsAuthenticated }) {
                 icon: "success",
                 confirmButtonText: "Aceptar"
             }).then(() => {
-                navigate("/login");
+                navigate("/inicio-page");
             });
 
         } catch (error) {
@@ -346,7 +346,7 @@ export default function Inicio({ setIsAuthenticated }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Gastos', 'Categorias', 'Cerrar Sesión'].map((text, index) => (
+                    {['Gastos', 'Categorias', 'Información', 'Cerrar Sesión'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 onClick={() => {
@@ -356,6 +356,8 @@ export default function Inicio({ setIsAuthenticated }) {
                                         navigate("/categorias-lista");
                                     } else if (text === "Cerrar Sesión") {
                                         handleLogout();
+                                    } else if (text === "Información") {
+                                        navigate('/info-page');
                                     }
                                 }}
                                 sx={[
@@ -389,6 +391,7 @@ export default function Inicio({ setIsAuthenticated }) {
                                 >
                                     {text === "Categorias" && <CategoryIcon />}
                                     {text === "Gastos" && <AttachMoneyIcon />}
+                                    {text === "Información" && <Info />}
                                     {text === "Cerrar Sesión" && <LogoutIcon />}
                                 </ListItemIcon>
                                 <ListItemText

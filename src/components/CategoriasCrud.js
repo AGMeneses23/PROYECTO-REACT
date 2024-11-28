@@ -27,7 +27,7 @@ import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
+import { Info } from '@mui/icons-material';
 const drawerWidth = 240;
 
 
@@ -255,7 +255,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
         icon: "success",
         confirmButtonText: "Aceptar"
       }).then(() => {
-        navigate("/login");
+        navigate("/inicio-page");
       });
 
     } catch (error) {
@@ -336,7 +336,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Gastos', 'Categorias', 'Cerrar Sesión'].map((text) => (
+          {['Gastos', 'Categorias', 'Información', 'Cerrar Sesión'].map((text) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => {
@@ -344,6 +344,8 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
                     navigate('/inicio');
                   } else if (text === "Categorias") {
                     navigate("/categorias-lista");
+                  } else if (text === "Información") {
+                    navigate('/info-page');
                   } else if (text === "Cerrar Sesión") {
                     handleLogout();
                   }
@@ -379,6 +381,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
                 >
                   {text === "Categorias" && <CategoryIcon />}
                   {text === "Gastos" && <AttachMoneyIcon />}
+                  {text === "Información" && <Info />}
                   {text === "Cerrar Sesión" && <LogoutIcon />}
                 </ListItemIcon>
                 <ListItemText

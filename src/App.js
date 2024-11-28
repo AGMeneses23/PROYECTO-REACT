@@ -7,6 +7,8 @@ import CategoriasCrud from './components/CategoriasCrud';
 import Registro from './components/Registro';
 import GastosCrud from './components/GastosCrud';
 import ResetPassword from './components/restorePassword';
+import Presentation from './components/Presentation';
+import InicioApp from './components/InicioApp';
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
 
     <Router>
       <Routes>
+        {/* Ruta raíz para redirigir automáticamente a /inicio-page */}
+        <Route path="/" element={<Navigate to="/inicio-page" />} />
         {/* Ruta del login */}
         <Route path="/login" element={isAuthenticated ? <Navigate to="/categorias-lista" /> : <Login setIsAuthenticated={setIsAuthenticated} />} />
         {/* Ruta del registro */}
@@ -34,6 +38,10 @@ function App() {
         <Route path="/gastos/:idGasto?" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
         {/* Ruta para recuperar contraseña */}
         <Route path='/reset-password' element={<ResetPassword />} />
+        {/* Ruta de pagina de información */}
+        <Route path='/info-page' element={isAuthenticated ? <Presentation setIsAuthenticated={setIsAuthenticated} /> : <Navigate to='/login' />} />
+        {/* Ruta de pagina incial */}
+        <Route path='/inicio-page' element={<InicioApp />} />
       </Routes>
     </Router>
 
