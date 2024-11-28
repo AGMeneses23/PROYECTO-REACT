@@ -6,6 +6,7 @@ import Inicio from './components/Inicio';
 import CategoriasCrud from './components/CategoriasCrud';
 import Registro from './components/Registro';
 import GastosCrud from './components/GastosCrud';
+import ResetPassword from './components/restorePassword';
 
 function App() {
 
@@ -31,6 +32,8 @@ function App() {
         <Route path="/gastos" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
         {/*Ruta para editar gastos*/}
         <Route path="/gastos/:idGasto?" element={isAuthenticated ? <GastosCrud setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} />
+        {/* Ruta para recuperar contraseña */}
+        <Route path='/reset-password' element={<ResetPassword />} />
       </Routes>
     </Router>
 

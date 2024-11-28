@@ -211,24 +211,45 @@ export default function Inicio({ setIsAuthenticated }) {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post("https://localhost/api/logout", null, {
+            // Verifica si el usuario inició sesión con Facebook
+            const isFacebookLogin = localStorage.getItem('isFacebookLogin') === "true";
+
+            if (isFacebookLogin) {
+                console.log('Llamando a FB.logout...');
+                // Llamar a FB.logout para cerrar sesión de Facebook
+                window.FB.logout((response) => {
+                    console.log('Sesión cerrada en Facebook:', response);
+
+                    if (response.status === 'unknown') {
+                        console.log('La sesión se cerró correctamente en Facebook');
+                    }
+                });
+            } else {
+                console.log("El usuario no inició sesión con Facebook");
+            }
+
+            // Continuar con el cierre del BackEnd
+            await axios.post("https://localhost/api/logout", null, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
             });
 
-            if (response.status === 200) {
-                localStorage.removeItem("token");
-                setIsAuthenticated(false);
-                Swal.fire({
-                    title: "Sesión Cerrada",
-                    text: "Has cerrado sesión exitosamente.",
-                    icon: "success",
-                    confirmButtonText: "Aceptar"
-                }).then(() => {
-                    navigate("/login");
-                });
-            }
+            // Limpiar token local y estado de autenticación
+            localStorage.removeItem("token");
+            localStorage.removeItem("isFacebookLogin");
+            setIsAuthenticated(false);
+
+            // Notificar al usuario
+            Swal.fire({
+                title: "Sesión Cerrada",
+                text: "Has cerrado sesión exitosamente.",
+                icon: "success",
+                confirmButtonText: "Aceptar"
+            }).then(() => {
+                navigate("/login");
+            });
+
         } catch (error) {
             console.error("Error al cerrar sesión: ", error);
             Swal.fire({
@@ -239,6 +260,8 @@ export default function Inicio({ setIsAuthenticated }) {
             });
         }
     };
+
+
 
     const columns = [
         // { field: 'id', headerName: 'ID', width: 70 },

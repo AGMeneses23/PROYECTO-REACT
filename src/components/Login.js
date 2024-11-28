@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import '../App.css';
 import { useNavigate } from 'react-router-dom';
+import LoginFacebookButton from './LoginFacebookButton';
 
 function Login({ setIsAuthenticated }) {
 
@@ -109,6 +110,49 @@ function Login({ setIsAuthenticated }) {
         }
     }
 
+    const responseFacebook = async (response) => {
+        if (response.accessToken) {
+            try {
+                // Aquí puedes enviar los datos a tu backend para validar o registrar el usuario.
+                const fbResponse = await axios.post('http://127.0.0.1:8000/api/login-facebook', {
+                    accessToken: response.accessToken,
+                    userID: response.userID,
+                });
+
+                if (fbResponse.status === 200) {
+                    localStorage.setItem('token', fbResponse.data.access_token);
+                    localStorage.setItem('isFacebookLogin', 'true'); // Agregar esta línea
+                    const userName = fbResponse.data.user.name;
+                    Swal.fire({
+                        title: 'Inicio de Sesión Exitoso',
+                        text: `¡Bienvenido, ${userName}!`,
+                        icon: 'success',
+                        confirmButtonText: 'Continuar',
+                    }).then(() => {
+                        console.log('setIsAuthenticated y navigate se ejecutarán ahora');
+                        setIsAuthenticated(true);
+                        navigate('/inicio');
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo iniciar sesión con Facebook.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
+            }
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: 'No se obtuvo respuesta de Facebook.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    };
+
+
     return (
         <Box
             sx={{
@@ -205,6 +249,12 @@ function Login({ setIsAuthenticated }) {
                     </Button>
                 </form>
 
+                {/* BOTON DE INICIO DE SESION CON FACEBOOK */}
+
+                <Box mt={3}>
+                    <LoginFacebookButton responseFacebook={responseFacebook}></LoginFacebookButton>
+                </Box>
+
                 <Typography
                     variant="body2"
                     sx={{
@@ -221,6 +271,27 @@ function Login({ setIsAuthenticated }) {
                         ¿No tienes cuenta? Regístrate
                     </Box>
                 </Typography>
+
+                {/* Enlace para recuperar la contraseña */}
+
+                <Typography
+                    variant="body2"
+                    sx={{
+                        marginTop: 1,
+                        color: '#1976d2',
+                        textAlign: 'center',
+                    }}
+                >
+                    <Box
+                        component="span"
+                        sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+                        onClick={() => navigate('/reset-password')}
+                    >
+                        ¿Olvidaste tu contraseña? Recuperala
+                    </Box>
+
+                </Typography>
+
             </Box>
         </Box>
     );
