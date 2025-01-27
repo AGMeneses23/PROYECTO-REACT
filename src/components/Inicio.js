@@ -229,7 +229,7 @@ export default function Inicio({ setIsAuthenticated }) {
             }
 
             // Continuar con el cierre del BackEnd
-            await axios.post("https://localhost/api/logout", null, {
+            await axios.post("http://127.0.0.1:8000/api/logout", null, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }

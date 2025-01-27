@@ -21,7 +21,7 @@ export default function Categoria() {
                     const token = localStorage.getItem("token");
 
                     if (token) {
-                        const response = await axios.get(`https://localhost/api/categorias/${idCat}`, {
+                        const response = await axios.get(`http://127.0.0.1:8000/api/categorias/${idCat}`, {
                             headers: {
                                 Authorization: `Bearer ${token}` // Asegúrate de incluir el token aquí
                             }
@@ -63,8 +63,8 @@ export default function Categoria() {
 
         try {
             const url = idCat
-                ? `https://localhost/api/categorias/editar/${idCat}`
-                : 'https://localhost/api/categorias/guardar';
+                ? `http://127.0.0.1:8000/api/categorias/editar/${idCat}`
+                : 'http://127.0.0.1:8000/api/categorias/guardar';
 
             const method = idCat ? 'put' : 'post';
             const token = localStorage.getItem('token');

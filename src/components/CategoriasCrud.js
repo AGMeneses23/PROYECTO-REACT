@@ -126,7 +126,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
         const token = localStorage.getItem("token");
 
         if (token) {
-          const response = await axios.get('https://localhost/api/categorias/lista', {
+          const response = await axios.get('http://127.0.0.1:8000/api/categorias/lista', {
             headers: {
               Authorization: `Bearer ${token}` // Agrega el token al encabezado
             }
@@ -177,7 +177,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
         return;
       }
 
-      const response = await axios.delete(`https://localhost/api/categorias/eliminar/${id}`, {
+      const response = await axios.delete(`http://127.0.0.1:8000/api/categorias/eliminar/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -237,7 +237,7 @@ export default function CategoriasCrud({ setIsAuthenticated }) {
       }
 
       // Continuar con el cierre del BackEnd
-      await axios.post("https://localhost/api/logout", null, {
+      await axios.post("http://127.0.0.1:8000/api/logout", null, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
